@@ -1,0 +1,6 @@
+-e .
+pytest
+aws-cdk.aws-lambda
+aws-cdk.core
+aws_cdk.aws_logs
+aws_cdk.aws_apigateway

@@ -1,0 +1,315 @@
+{
+  "Resources": {
+    "SingletonServiceRoleDDD815CD": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "hello-cdk-1/Singleton/ServiceRole/Resource"
+      }
+    },
+    "Singleton8C7B99F3": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "ZipFile": "def main(event, context):\n    mnumber=event['queryStringParameters']['mnumber']\n    mydic={'98198': 'vodafone-mumbai', '98199': 'airtel-delhi'}\n    code=str(mnumber)[-10:][:5]\n    print(event)\n    return {\n        \"statusCode\": 200,\n        \"body\": mydic[code]\n    }\n"
+        },
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "SingletonServiceRoleDDD815CD",
+            "Arn"
+          ]
+        },
+        "Runtime": "python2.7",
+        "Description": "My function",
+        "FunctionName": "mylambdafn2",
+        "MemorySize": 128,
+        "Timeout": 10
+      },
+      "DependsOn": [
+        "SingletonServiceRoleDDD815CD"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "hello-cdk-1/Singleton/Resource"
+      }
+    },
+    "SingletonApiPermissionGETE7279182": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "Singleton8C7B99F3",
+            "Arn"
+          ]
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:us-east-2:",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "MyRestAPI3E28346C"
+              },
+              "/",
+              {
+                "Ref": "MyRestAPIDeploymentStageprod8501BD4F"
+              },
+              "/GET/"
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "hello-cdk-1/Singleton/ApiPermission.GET.."
+      }
+    },
+    "SingletonApiPermissionTestGET18A5CC88": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "Singleton8C7B99F3",
+            "Arn"
+          ]
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:us-east-2:",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "MyRestAPI3E28346C"
+              },
+              "/test-invoke-stage/GET/"
+            ]
+          ]
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "hello-cdk-1/Singleton/ApiPermission.Test.GET.."
+      }
+    },
+    "MyRestAPI3E28346C": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Description": "My API",
+        "Name": "my-api1"
+      },
+      "Metadata": {
+        "aws:cdk:path": "hello-cdk-1/MyRestAPI/Resource"
+      }
+    },
+    "MyRestAPIDeployment8E8E25C1f9f3d7d22c54b82b3d8498c7f8d10029": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "MyRestAPI3E28346C"
+        },
+        "Description": "Automatically created by the RestApi construct"
+      },
+      "DependsOn": [
+        "MyRestAPIGET92C47273"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "hello-cdk-1/MyRestAPI/Deployment/Resource"
+      }
+    },
+    "MyRestAPIDeploymentStageprod8501BD4F": {
+      "Type": "AWS::ApiGateway::Stage",
+      "Properties": {
+        "RestApiId": {
+          "Ref": "MyRestAPI3E28346C"
+        },
+        "DeploymentId": {
+          "Ref": "MyRestAPIDeployment8E8E25C1f9f3d7d22c54b82b3d8498c7f8d10029"
+        },
+        "StageName": "prod"
+      },
+      "Metadata": {
+        "aws:cdk:path": "hello-cdk-1/MyRestAPI/DeploymentStage.prod/Resource"
+      }
+    },
+    "MyRestAPICloudWatchRole29A5B43B": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "apigateway.",
+                      {
+                        "Ref": "AWS::URLSuffix"
+                      }
+                    ]
+                  ]
+                }
+              }
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
+              ]
+            ]
+          }
+        ]
+      },
+      "Metadata": {
+        "aws:cdk:path": "hello-cdk-1/MyRestAPI/CloudWatchRole/Resource"
+      }
+    },
+    "MyRestAPIAccount3EAF15DE": {
+      "Type": "AWS::ApiGateway::Account",
+      "Properties": {
+        "CloudWatchRoleArn": {
+          "Fn::GetAtt": [
+            "MyRestAPICloudWatchRole29A5B43B",
+            "Arn"
+          ]
+        }
+      },
+      "DependsOn": [
+        "MyRestAPI3E28346C"
+      ],
+      "Metadata": {
+        "aws:cdk:path": "hello-cdk-1/MyRestAPI/Account"
+      }
+    },
+    "MyRestAPIGET92C47273": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "HttpMethod": "GET",
+        "ResourceId": {
+          "Fn::GetAtt": [
+            "MyRestAPI3E28346C",
+            "RootResourceId"
+          ]
+        },
+        "RestApiId": {
+          "Ref": "MyRestAPI3E28346C"
+        },
+        "AuthorizationType": "NONE",
+        "Integration": {
+          "ContentHandling": "CONVERT_TO_TEXT",
+          "IntegrationHttpMethod": "POST",
+          "PassthroughBehavior": "WHEN_NO_TEMPLATES",
+          "RequestTemplates": {
+            "0": "{\"mnumber\": \"$input.params('mnumber')\"}"
+          },
+          "Type": "AWS",
+          "Uri": {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition"
+                },
+                ":apigateway:us-east-2:lambda:path/2015-03-31/functions/",
+                {
+                  "Fn::GetAtt": [
+                    "Singleton8C7B99F3",
+                    "Arn"
+                  ]
+                },
+                "/invocations"
+              ]
+            ]
+          }
+        },
+        "RequestParameters": {
+          "method.request.querystring.mumber": true
+        }
+      },
+      "Metadata": {
+        "aws:cdk:path": "hello-cdk-1/MyRestAPI/Default/GET/Resource"
+      }
+    }
+  },
+  "Outputs": {
+    "MyRestAPIEndpointA2E1DEAF": {
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "MyRestAPI3E28346C"
+            },
+            ".execute-api.us-east-2.",
+            {
+              "Ref": "AWS::URLSuffix"
+            },
+            "/",
+            {
+              "Ref": "MyRestAPIDeploymentStageprod8501BD4F"
+            },
+            "/"
+          ]
+        ]
+      }
+    }
+  }
+}

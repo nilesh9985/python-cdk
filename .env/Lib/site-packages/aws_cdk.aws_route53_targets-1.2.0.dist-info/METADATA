@@ -1,0 +1,60 @@
+Metadata-Version: 2.1
+Name: aws-cdk.aws-route53-targets
+Version: 1.2.0
+Summary: CDK Constructs for AWS Route53 Alias Targets
+Home-page: https://github.com/aws/aws-cdk
+Author: Amazon Web Services
+License: UNKNOWN
+Project-URL: Source, https://github.com/aws/aws-cdk.git
+Platform: UNKNOWN
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+Requires-Dist: jsii (~=0.14.2)
+Requires-Dist: publication (>=0.0.3)
+Requires-Dist: aws-cdk.aws-apigateway (>=1.2.0,~=1.2)
+Requires-Dist: aws-cdk.aws-cloudfront (>=1.2.0,~=1.2)
+Requires-Dist: aws-cdk.aws-elasticloadbalancingv2 (>=1.2.0,~=1.2)
+Requires-Dist: aws-cdk.aws-iam (>=1.2.0,~=1.2)
+Requires-Dist: aws-cdk.aws-route53 (>=1.2.0,~=1.2)
+Requires-Dist: aws-cdk.core (>=1.2.0,~=1.2)
+
+# Route53 Alias Record Targets for the CDK Route53 Library
+<!--BEGIN STABILITY BANNER-->
+
+---
+
+![Stability: Stable](https://img.shields.io/badge/stability-Stable-success.svg?style=for-the-badge)
+
+
+---
+<!--END STABILITY BANNER-->
+
+This library contains Route53 Alias Record targets for:
+* API Gateway custom domains
+  ```ts
+  new route53.ARecord(this, 'AliasRecord', {
+    zone,
+    target: route53.RecordTarget.fromAlias(new alias.ApiGateway(restApi)),
+    // or - route53.RecordTarget.fromAlias(new alias.ApiGatewayDomainName(domainName)),
+  });
+  ```
+* CloudFront distributions
+  ```ts
+  new route53.ARecord(this, 'AliasRecord', {
+    zone,
+    target: route53.RecordTarget.fromAlias(new alias.CloudFrontTarget(distribution)),
+  });
+  ```
+* ELBv2 load balancers
+  ```ts
+  new route53.ARecord(this, 'AliasRecord', {
+    zone,
+    target: route53.RecordTarget.fromAlias(new alias.LoadBalancerTarget(elbv2)),
+    // or - route53.RecordTarget.fromAlias(new alias.ApiGatewayDomainName(domainName)),
+  });
+  ```
+
+See the documentation of `@aws-cdk/aws-route53` for more information.
+
+
+
