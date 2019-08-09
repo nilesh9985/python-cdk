@@ -33,21 +33,27 @@ class MyStack(core.Stack):
             rest_api_name="my-api1",
             description="My API",
             )
-        
+            
+        rest_api.root.add_resource('send')
+        #badrequestResponse: gateway_.IntegrationResponse = { 'statusCode': "400" }
+        #internalServerResponse: gateway_.IntegrationResponse = { 'statusCode': "500" }
+        okResponse: gateway_.IntegrationResponse = { 'statusCode': '200' }
+                
         integration: gateway_.LambdaIntegration = gateway_.LambdaIntegration(handler=lambdaFn,
                                                                           proxy=False,
                                                                           passthrough_behavior=gateway_.PassthroughBehavior.WHEN_NO_TEMPLATES,
                                                                           content_handling=gateway_.ContentHandling.CONVERT_TO_TEXT,
                                                                           #integration_responses=gateway_.IntegrationResponse.status_code
-                                                                          request_templates=["{\"mnumber\": \"$input.params('mnumber')\"}"]
+                                                                          request_templates=["{\"mnumber\": \"$input.params('mnumber')\"}"],
+                                                                          integration_responses=[okResponse]
+                                                                          
                                                                            )
-    
+
         rest_api.root.add_method(
             http_method="GET",            
             integration=integration,
             request_parameters={"method.request.querystring.mumber":True},
-            #method_responses=gateway_.IntegrationResponse("200","400","401")
-            #method_responses=
+            method_responses=[okResponse]
            )
 
 
