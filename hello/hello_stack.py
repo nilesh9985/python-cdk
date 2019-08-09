@@ -38,13 +38,15 @@ class MyStack(core.Stack):
         #badrequestResponse: gateway_.IntegrationResponse = { 'statusCode': "400" }
         #internalServerResponse: gateway_.IntegrationResponse = { 'statusCode': "500" }
         okResponse: gateway_.IntegrationResponse = { 'statusCode': '200' }
+        #template: gateway_.LambdaIntegration.request_templates = { 'application/json': "{\"mnumber\": \"$input.params('mnumber')\"}" }
                 
         integration: gateway_.LambdaIntegration = gateway_.LambdaIntegration(handler=lambdaFn,
                                                                           proxy=False,
                                                                           passthrough_behavior=gateway_.PassthroughBehavior.WHEN_NO_TEMPLATES,
                                                                           content_handling=gateway_.ContentHandling.CONVERT_TO_TEXT,
                                                                           #integration_responses=gateway_.IntegrationResponse.status_code
-                                                                          request_templates=["{\"mnumber\": \"$input.params('mnumber')\"}"],
+                                                                          request_templates={'application/json': "{\"mnumber\": \"$input.params('mnumber')\"}"},
+                                                                          #request_templates=[template]
                                                                           integration_responses=[okResponse]
                                                                           
                                                                            )
